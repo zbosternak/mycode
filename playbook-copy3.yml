@@ -1,0 +1,8 @@
+---
+- name: Copying files from controller to hosts
+  hosts: planetexpress
+
+  tasks:
+
+    - name: Move foo to bar
+      command: cp ~/fry.txt /tmp/fry.txt    

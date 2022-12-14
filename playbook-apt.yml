@@ -1,0 +1,23 @@
+---
+- name: Playbook - Install figlet    # metadata
+  hosts: planetexpress # we can safely target ALL hosts in planetexpress group because we are using when conditions for our tasks
+  connection: ssh     # default is to use the connection plugin ssh.py
+  gather_facts: yes   # default is yes
+
+  tasks:                             # a list of what we want to do
+  - name: using apt to install figlet  # metadata
+    apt:                     # the module we want to run, apt.py
+        name: figlet         # parameter name has the value figlet
+        state: present       # parameter state has the value present
+    become: yes              # elevate status to admin, sudo, enable, etc.
+    when: ansible_os_family == "Debian"
+      # when is another ansible keyword; it's a condition that must be TRUE in order for the task to execute
+      #
+  - name: using yum  
+    yum:
+        name: figlet
+        state: present
+    become: yes
+    when: ansible_os_family == "RedHat"
+      # pretty sure this will work
+
