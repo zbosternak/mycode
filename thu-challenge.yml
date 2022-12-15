@@ -1,0 +1,13 @@
+---
+- name: populate the switch config file with data from challengevars.yml
+  hosts: localhost
+  gather_facts: no   
+
+  vars_files:
+    - vars/challengevars.yml
+
+  tasks:
+    - name: Populate config
+      template:
+        src: ~/mycode/templates/baseIOS.conf.j2    # name of the template on ansible controller
+        dest: "~/mycode/thu-challenge-{{ switchname }}.cfg"              # name of the completed file to be placed on the target system
