@@ -1,0 +1,59 @@
+---
+- name: Friday morning challenge
+  hosts: fry
+  connection: ssh
+  gather_facts: no
+  become: yes
+
+  vars:
+    URL1: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          62353733623037366364363665303264643866396239626339386333613263376633353230663938
+          3436383466343466373161316133383537616530663335610a303638396438306536643238333839
+          64626133346636313731633333343230616465643865326130313666636363393561633537313563
+          3131323730363764650a666239363231306263393263333538313433336539363039313633343063
+          37313432623038316234613965376437613534396434656631653631323362303937613635613631
+          66616433613037353930393766623236306236623966666431626139323331386162316539633639
+          33363938626263656630626163613935383037323038633835393432316464666637303438626437
+          66346337383134616262386364386133366433306437346562633762646666666336653963326563
+    
+  tasks:
+
+  - name: Install apps for minecraft server
+    block:
+        - name: Install additional apps via apt
+          apt:
+            name:
+               - fail2ban # enables the linux host to ban IPs with suspicious SSH activity
+            state: present
+    rescue: 
+        - name: Zoli's rescue task
+          apt:
+            name:
+               - fail2ban # enables the linux host to ban IPs with suspicious SSH activity
+            state: absent
+        - name: Message
+          debug:
+            msg: "{{All apps have been uninstalled !!!  }}" 
+
+
+
+  - name: Copy fail2ban (ssh protection)
+    copy:
+      content: "get off my dang server"
+      dest: /etc/fail2ban/jail.txt
+
+  - name: Restart fail2ban
+    service:
+      name: fail2ban
+      state: started
+
+  - name: Add a directory
+    file:
+      path: "/home/{{ ansible_user }}/minecraft"
+      state: directory
+      
+  - name: Download minecraft server
+    get_url:
+      url: "{{ URL1 }}"
+      dest: /home/{{ ansible_user }}/minecraft/minecraft_server.jar
